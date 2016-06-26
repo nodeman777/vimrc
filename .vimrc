@@ -25,6 +25,14 @@ Plugin 'scrooloose/syntastic'
 Plugin 'marijnh/tern_for_vim'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'alvan/vim-closetag'
+Plugin 'kien/ctrlp.vim'
+Plugin 'rking/ag.vim'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'mattn/emmet-vim'
+Plugin 'pangloss/vim-javascript' 
+Plugin 'mxw/vim-jsx'
+Plugin 'othree/javascript-libraries-syntax.vim'
+Plugin 'isRuslan/vim-es6'
 
 call vundle#end()
 
@@ -34,6 +42,70 @@ let g:UltiSnipsSnippetDirectories=["mysnippets"]
 let g:UltiSnipsExpandTrigger="<leader><tab>"
 let g:UltiSnipsJumpForwardTrigger="<leader><tab>"
 let g:UltiSnipsJumpBackwardTrigger="<leader><s-tab>"
+
+" ----------------------------------------------------------------------------
+" vim-autoformat
+"require: npm install -g js-beautify
+" ----------------------------------------------------------------------------
+autocmd FileType javascript,json,html,css,scss noremap <buffer>  <leader>f :Autoformat<cr>
+
+
+
+" ----------------------------------------------------------------------------
+" vim-jsx
+" ----------------------------------------------------------------------------
+let g:jsx_ext_required = 0 " Allow JSX in normal JS files"
+let g:used_javascript_libs = 'react'
+" ----------------------------------------------------------------------------
+" tern_for_vim
+" ----------------------------------------------------------------------------
+let tern_show_signature_in_pum = 1
+let tern_show_argument_hints = 'on_hold'
+autocmd FileType javascript nnoremap <leader>d :TernDef<CR>
+autocmd FileType javascript setlocal omnifunc=tern#Complete
+
+"nerdcommenter setting
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+
+" Add your own custom formats or override the defaults
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+
+"ag setting
+set runtimepath^=~/.vim/bundle/ag
+"configure ag.vim to always start searching from your project root instead of the cwd
+let g:ag_working_path_mode="r"
+
+
+" CtrlP setting 
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
 
 nmap <F8> :TagbarToggle<CR>
 
@@ -60,6 +132,40 @@ let g:ycm_min_num_of_chars_for_completion=1
 let g:ycm_cache_omnifunc=0
 " 语法关键字补全         
 let g:ycm_seed_identifiers_with_syntax=1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_key_list_select_completion = ['<Tab>', '<C-j>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
+let g:ycm_semantic_triggers =  {
+            \   'cs,java,typescript,d,python,perl6,scala,vb,elixir,go' : ['.', 're!(?=[a-zA-Z]{3,4})'],
+            \   'html': ['<', '"', '</', ' '],
+            \   'vim' : ['re![_a-za-z]+[_\w]*\.'],
+            \   'lua' : ['.', ':'],
+            \   'scss,css': [ 're!^\s{2,4}', 're!:\s+' ],
+            \   'javascript': ['.', 're!(?=[a-zA-Z]{3,4})'],
+            \ }
+" ----------------------------------------------------------------------------
+" tagbar
+" require ctags, jsctags
+" npm install -g git+https://github.com/ramitos/jsctags.git
+" ----------------------------------------------------------------------------
+
+" ----------------------------------------------------------------------------
+" ctrlp.vim
+" ----------------------------------------------------------------------------
+nnoremap <leader>m :CtrlPMRU<CR>
+nnoremap <leader>b :CtrlPBuffer<CR>
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/](node_modules|target|dist)|\.(git|hg|svn|rvm)$',
+    \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz)$',
+    \ }
+let g:ctrlp_follow_symlinks=1
+
+let g:tagbar_type_javascript = {
+    \ 'ctagsbin' : 'jsctags'
+    \ }
+nnoremap <leader>t :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+let g:tagbar_width = 50
 
 " 定义快捷键到行首和行尾
 nmap LB 0
@@ -88,14 +194,25 @@ nnoremap <Leader>jw <C-W>j
 " 定义快捷键在结对符之间跳转
 nmap <Leader>M %
 
+
+" ----------------------------------------------------------------------------
+" syntastic
+" ----------------------------------------------------------------------------
+let g:syntastic_error_symbol='✘'
+let g:syntastic_warning_symbol='❗'
+let g:syntastic_style_error_symbol='»'
+let g:syntastic_style_warning_symbol='•'
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_highlighting = 0
+let g:syntastic_javascript_checkers = ['eslint']
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1 
+let g:syntastic_check_on_wq = 0
+
 set statusline+=%#warningmsg# 
 set statusline+=%{SyntasticStatuslineFlag()} 
 set statusline+=%*  
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1 
-let g:syntastic_check_on_open = 1 
-let g:syntastic_check_on_wq = 0
-
 " 开启实时搜索功能
 set incsearch
 " 搜索时大小写不敏感
@@ -141,7 +258,7 @@ autocmd vimenter * if !argc() | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " 配色方案 
-:set background=dark
+set background=dark
 colorscheme solarized
 " 设置状态栏主题风格 
 let g:Powerline_colorscheme='solarized'
@@ -150,6 +267,15 @@ set guifont=Consolas:h13:cANSI "Ubuntu\ Mono\ derivative\ Powerlin:h14:cANSI
 set guioptions-=m
 set guioptions-=T
 set t_Co=256
+" ----------------------------------------------------------------------------
+" vim-colors-solarized
+" ----------------------------------------------------------------------------
+let g:solarized_termcolors=16
+"let g:solarized_termtrans=1
+let g:solarized_contrast="high"
+let g:solarized_visibility="high"
+
+
 set guitablabel=%M\ %t
 " 禁止光标闪烁
 set gcr=a:block-blinkon0
@@ -168,7 +294,7 @@ set ruler
 set number
 " 高亮显示当前行/列 
 set cursorline 
-"set cursorcolumn 
+set cursorcolumn 
 " 高亮显示搜索结果 
 set hlsearch
 " 开启语法高亮功能 
@@ -191,4 +317,3 @@ set foldmethod=indent
 set foldmethod=syntax "
 " 启动 vim 时关闭折叠代码 
 set nofoldenable
-
